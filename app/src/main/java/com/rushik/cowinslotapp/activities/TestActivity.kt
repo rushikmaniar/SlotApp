@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.rushik.cowinslotapp.R
 import com.rushik.cowinslotapp.data.localdatabase.providers.ApiProvider
 import com.rushik.cowinslotapp.databinding.ActivityTestBinding
@@ -17,57 +19,101 @@ import com.rushik.cowinslotapp.frameworks.ToastWrp
 import com.rushik.cowinslotapp.frameworks.nonNull
 import com.rushik.cowinslotapp.models.State
 import com.rushik.cowinslotapp.services.SlotCheckService
+import com.rushik.cowinslotapp.viewmodel.HomeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class TestActivity : AppCompatActivity() {
     private lateinit var activityTestBinding: ActivityTestBinding
     private var appDomain: AppDomain = AppDomain(ApiProvider())
     private lateinit var stateAdapter: ArrayAdapter<String>
     private lateinit var districtAdapter: ArrayAdapter<String>
+    private lateinit var intervalAdapter: ArrayAdapter<Int>
+    private lateinit var homeViewModel: HomeViewModel
     private val simpleDateFormat: SimpleDateFormat = SimpleDateFormat(AppConstant.DEFAULT_DATE_FORMAT, Locale.US)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         activityTestBinding = DataBindingUtil.setContentView(this, R.layout.activity_test)
+        activityTestBinding.homeViewModel = homeViewModel
+        activityTestBinding.lifecycleOwner = this
 
         fetchAndSetStates()
 
         setStatesSpinner()
         setDistrictSpinner()
+        setIntervalSpinner()
         setDatePicker()
 
-        AppCache.isServiceRunning.observe(this, {
-            activityTestBinding.startBtn.isEnabled = !it
-            activityTestBinding.stopBtn.isEnabled = it
-            activityTestBinding.spinnerState.isEnabled = !it
-            activityTestBinding.spinnerDistrcit.isEnabled = !it
-            activityTestBinding.datePicker.isEnabled = !it
+        AppCache.selectedState.nonNull().observe(this, {
+            fetchAndSetDistricts(it)
+            val position = AppCache.statesLiveData.value?.indexOf(it) ?: -1
+            activityTestBinding.spinnerState.setSelection(position)
         })
 
+        AppCache.selectedDistrict.nonNull().observe(this, {
+            val position = AppCache.districtLiveData.value?.indexOf(it) ?: -1
+            activityTestBinding.spinnerDistrcit.setSelection(position)
+        })
     }
 
     fun onStartService(view: View) {
         val selectedState = AppCache.selectedState.value
-        val selectedDistrict = AppCache.selectedState.value
+        val selectedDistrict = AppCache.selectedDistrict.value
         if (selectedState == null || selectedDistrict == null) {
-            ToastWrp.error(applicationContext, "Please Select All Above Fileds")
+            ToastWrp.error(applicationContext, "Please Select All Above Fields")
             return
         }
 
-        if (AppCache.isServiceRunning.value == false) {
-            startService(Intent(applicationContext, SlotCheckService::class.java))
-            AppCache.isServiceRunning.postValue(true)
-        }
+        AlertDialog.Builder(this)
+            .setMessage("Are you want to Subscribe for ${selectedDistrict.districtName} : ${AppCache.selectedDateString.value}")
+            .setPositiveButton("Yes") { dialog, which ->
+
+                if (AppCache.isServiceRunningLiveData.value == false) {
+                    startService(Intent(applicationContext, SlotCheckService::class.java))
+                    AppCache.isServiceRunningLiveData.postValue(true)
+                }
+
+                dialog.dismiss()
+            }.setNegativeButton("No", null).create().show()
     }
 
     fun onStopService(view: View) {
-        stopService(Intent(applicationContext, SlotCheckService::class.java))
-        AppCache.isServiceRunning.postValue(false)
+        val selectedDistrict = AppCache.selectedDistrict.value
+
+        AlertDialog.Builder(this)
+            .setMessage("Are you want to UnSubscribe for ${selectedDistrict?.districtName} : ${AppCache.selectedDateString.value}")
+            .setPositiveButton("Yes") { dialog, which ->
+
+                stopService(Intent(applicationContext, SlotCheckService::class.java))
+                AppCache.isServiceRunningLiveData.postValue(false)
+
+                dialog.dismiss()
+            }.setNegativeButton("No", null).create().show()
+    }
+
+    private fun setIntervalSpinner() {
+        intervalAdapter = ArrayAdapter<Int>(this, android.R.layout.simple_spinner_item, AppCache.timeIntervals)
+        activityTestBinding.spinnerInterval.adapter = intervalAdapter
+        activityTestBinding.spinnerInterval.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    AppCache.checkSlotsIntervalLiveData.postValue(AppCache.timeIntervals[position])
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    AppCache.checkSlotsIntervalLiveData.postValue(AppCache.timeIntervals[0])
+                }
+            }
     }
 
     private fun setStatesSpinner() {
@@ -122,10 +168,6 @@ class TestActivity : AppCompatActivity() {
             districtAdapter.addAll(districts.map { it.districtName })
             districtAdapter.notifyDataSetChanged()
         })
-
-        AppCache.selectedState.nonNull().observe(this, {
-            fetchAndSetDistricts(it)
-        })
     }
 
     private fun setDatePicker() {
@@ -136,7 +178,7 @@ class TestActivity : AppCompatActivity() {
             calendar.get(Calendar.DAY_OF_MONTH)
         ) { view, year, monthOfYear, dayOfMonth ->
             val calendar1 = Calendar.getInstance()
-            calendar1.set(year,monthOfYear,dayOfMonth)
+            calendar1.set(year, monthOfYear, dayOfMonth)
 
             val dateString = simpleDateFormat.format(Date.from(calendar1.toInstant()))
             val selectedDate = AppCache.selectedDateString.value
@@ -158,8 +200,12 @@ class TestActivity : AppCompatActivity() {
                 date = sdf.parse(dateString)
                 val calendar1 = Calendar.getInstance()
                 calendar1.time = date
-                activityTestBinding.datePicker.updateDate(calendar1.get(Calendar.YEAR), calendar1.get(Calendar.MONTH), calendar1.get(Calendar.DAY_OF_MONTH))
-            }catch (e:Exception){
+                activityTestBinding.datePicker.updateDate(
+                    calendar1.get(Calendar.YEAR),
+                    calendar1.get(Calendar.MONTH),
+                    calendar1.get(Calendar.DAY_OF_MONTH)
+                )
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         })

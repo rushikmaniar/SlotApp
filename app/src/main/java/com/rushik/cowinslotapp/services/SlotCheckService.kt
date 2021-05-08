@@ -5,13 +5,22 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import com.rushik.cowinslotapp.data.localdatabase.providers.ApiProvider
+import com.rushik.cowinslotapp.domain.AppDomain
 import com.rushik.cowinslotapp.frameworks.AppCache
+import com.rushik.cowinslotapp.frameworks.AppConstant
+import com.rushik.cowinslotapp.frameworks.AppHelper
 import com.rushik.cowinslotapp.frameworks.AppLog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
 class SlotCheckService : Service() {
-    val handler = Handler(Looper.getMainLooper())
+    private val handler = Handler(Looper.getMainLooper())
+    private val appDomain = AppDomain(ApiProvider())
+    private var notificationId = 0
 
     override fun onBind(intent: Intent?): IBinder? {
         TODO("Not yet implemented")
@@ -20,7 +29,7 @@ class SlotCheckService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         checkSlotsRunnable.run()
-
+        startForeground(123456, AppHelper.getNotification(this))
         return START_STICKY
     }
 
@@ -30,17 +39,33 @@ class SlotCheckService : Service() {
                 state : ${AppCache.selectedState.value?.stateName}
                 district : ${AppCache.selectedDistrict.value?.districtName}
                 Date : ${AppCache.selectedDateString.value}
-                CurrentDate : ${SimpleDateFormat("yyyy-mm-dd hh:mm:ss a",Locale.US).format(Date())}
+                CurrentDate : ${SimpleDateFormat("yyyy-mm-dd hh:mm:ss a", Locale.US).format(Date())}
             """.trimIndent()
 
-            AppLog.debug(str,"AppLog")
+            AppLog.debug(str, "AppLog")
 
-            handler.postDelayed(this, AppCache.checkSlotsInterval)
+            checkForAvailableSlots()
+
+            val interval = AppCache.checkSlotsIntervalLiveData.value ?: AppConstant.DEFAULT_CHECK_SLOT_INTERVAL
+            handler.postDelayed(this, (interval * 60 * 1000L))
+        }
+    }
+
+    fun checkForAvailableSlots() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = appDomain.fetchAvailableSlotsByDistrict()
+            val newCenters = response.filter { !AppCache.knownCenters.contains(it.centerId) }
+            if (newCenters.isNotEmpty()) {
+                val description = newCenters.joinToString(separator = ",") { it.name }
+                AppHelper.showNotification(applicationContext, notificationId++, "New Slots Available", description)
+            }
+            AppCache.knownCenters = response.map { it.centerId }.toCollection(arrayListOf())
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        AppCache.knownCenters = arrayListOf()
         handler.removeCallbacks(checkSlotsRunnable)
     }
 }

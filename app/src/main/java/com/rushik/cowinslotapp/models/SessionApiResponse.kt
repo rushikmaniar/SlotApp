@@ -1,5 +1,5 @@
 package com.rushik.cowinslotapp.models
 
 data class SessionApiResponse(
-    var sessions : List<Session> = ArrayList(),
+    var sessions: ArrayList<Session> = arrayListOf(),
 )

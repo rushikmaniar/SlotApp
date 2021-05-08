@@ -6,4 +6,7 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="refresh">Refresh</string>
+    <string name="select_interval_in_minutes">Select Interval In Minutes</string>
+    <string name="message_check_your_connection">Please check your Network connection.</string>
+    <string name="network_error">Network Error</string>
 </resources>

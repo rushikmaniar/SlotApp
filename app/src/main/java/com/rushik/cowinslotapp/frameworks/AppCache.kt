@@ -10,6 +10,9 @@ object AppCache {
     var selectedState = MutableLiveData<State?>(null)
     var selectedDistrict = MutableLiveData<District?>(null)
     var selectedDateString = MutableLiveData<String?>(null)
-    var isServiceRunning = MutableLiveData(false)
-    var checkSlotsInterval = 3000L
+    var isServiceRunningLiveData = MutableLiveData(false)
+    var checkSlotsIntervalLiveData = MutableLiveData(AppConstant.DEFAULT_CHECK_SLOT_INTERVAL)
+    var knownCenters = arrayListOf<Int>()
+    var timeIntervals = arrayListOf(2,5,10)
+    var isNetworkAvailableLiveData = MutableLiveData(false)
 }

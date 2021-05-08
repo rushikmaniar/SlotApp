@@ -4,24 +4,27 @@ import com.google.gson.annotations.SerializedName
 
 data class Session(
     @SerializedName("session_id")
-    var sessionId:String,
+    var sessionId: String,
     @SerializedName("center_id")
     var centerId: Int,
     var name: String,
-    var address: String,
+    var address: String?,
     @SerializedName("state_name")
-    var stateName: String,
+    var stateName: String?,
     @SerializedName("district_name")
-    var districtName: String,
-    @SerializedName("district_name")
-    var blockName: String,
-    var pincode: Int,
-    var from: String,
-    var to: String,
+    var districtName: String?,
+    @SerializedName("available_capacity")
+    var availableCapacity: Int,
+    var blockName: String?,
+    var pincode: Int?,
+    var from: String?,
+    var to: String?,
     @SerializedName("fee_type")
-    var feeType: String,
+    var feeType: String?,
+    var date: String?,
+    var fee: String?,
     @SerializedName("min_age_limit")
-    var minAgeLimit: String,
-    var vaccine: String,
-    var slots: ArrayList<String>,
+    var minAgeLimit: String?,
+    var vaccine: String?,
+    var slots: ArrayList<String>? = arrayListOf(),
 )

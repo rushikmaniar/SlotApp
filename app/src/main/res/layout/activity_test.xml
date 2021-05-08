@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="homeViewModel"
+            type="com.rushik.cowinslotapp.viewmodel.HomeViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,14 +43,16 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        app:isEnabled="@{!homeViewModel.isServiceRunningLiveData}" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
                         android:onClick="onStateRefresh"
-                        android:text="@string/refresh" />
+                        android:text="@string/refresh"
+                        app:isEnabled="@{!homeViewModel.isServiceRunningLiveData}" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -70,19 +79,42 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        app:isEnabled="@{!homeViewModel.isServiceRunningLiveData}" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
                         android:onClick="onDistrictRefresh"
-                        android:text="@string/refresh" />
+                        android:text="@string/refresh"
+                        app:isEnabled="@{!homeViewModel.isServiceRunningLiveData}" />
 
                 </LinearLayout>
 
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_interval_in_minutes" />
+
+                <Spinner
+                    android:id="@+id/spinner_interval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -94,14 +126,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/selct_date" />
+                    android:text="@string/selct_date"
+                    app:isEnabled="@{!homeViewModel.isServiceRunningLiveData}" />
 
 
                 <DatePicker
                     android:id="@+id/date_picker"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+                    android:layout_marginTop="10dp"
+                    app:isEnabled="@{!homeViewModel.isServiceRunningLiveData}" />
 
             </LinearLayout>
 
@@ -113,29 +147,33 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
+            <Button
                 android:id="@+id/start_btn"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:color/holo_green_light"
+                android:backgroundTint="@{homeViewModel.isServiceRunningLiveData ? @color/button_disable : @android:color/holo_green_light}"
                 android:gravity="center"
+                android:onClick="onStartService"
                 android:padding="10dp"
                 android:text="@string/start"
-                android:onClick="onStartService"
-                android:textColor="@android:color/white" />
+                android:textColor="@{homeViewModel.isServiceRunningLiveData ? @android:color/black : @android:color/white}"
+                app:isEnabled="@{!homeViewModel.isServiceRunningLiveData}" />
 
-            <TextView
+            <Button
                 android:id="@+id/stop_btn"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:color/holo_red_light"
+                android:backgroundTint="@{!homeViewModel.isServiceRunningLiveData ? @color/button_disable : @android:color/holo_red_light}"
                 android:gravity="center"
+                android:onClick="onStopService"
                 android:padding="10dp"
                 android:text="@string/stop"
-                android:onClick="onStopService"
-                android:textColor="@android:color/white" />
+                android:textColor="@{!homeViewModel.isServiceRunningLiveData ? @android:color/black : @android:color/white}"
+                app:isEnabled="@{homeViewModel.isServiceRunningLiveData}" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
