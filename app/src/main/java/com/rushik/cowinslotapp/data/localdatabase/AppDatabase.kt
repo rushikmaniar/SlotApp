@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.rushik.cowinslotapp.AppConstant
+import com.rushik.cowinslotapp.frameworks.AppConstant
 import com.rushik.cowinslotapp.data.localdatabase.dao.SubscriptionDao
 import com.rushik.cowinslotapp.data.localdatabase.entities.Subscription
 

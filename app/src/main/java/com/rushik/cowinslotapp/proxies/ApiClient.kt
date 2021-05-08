@@ -1,9 +1,9 @@
 package com.rushik.cowinslotapp.proxies
 
-import com.facebook.flipper.plugins.network.BuildConfig
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
-import com.rushik.cowinslotapp.AppHelper
+import com.rushik.cowinslotapp.frameworks.AppHelper
+import com.rushik.cowinslotapp.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,6 +14,11 @@ class ApiClient {
         private fun getRetrofitBuilder(): Retrofit? {
             return try {
                 val oktHttpClient = OkHttpClient.Builder()
+                oktHttpClient.addInterceptor {
+                    it.proceed(
+                        it.request().newBuilder().addHeader("User-Agent", "PostmanRuntime/7.28.0").build()
+                    )
+                }
                 oktHttpClient.addNetworkInterceptor(FlipperOkhttpInterceptor(getNetworkFlipperPlugin()))
 
                 Retrofit.Builder()

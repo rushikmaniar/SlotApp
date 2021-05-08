@@ -11,6 +11,7 @@ import com.facebook.flipper.plugins.leakcanary2.FlipperLeakListener
 import com.facebook.flipper.plugins.leakcanary2.LeakCanary2FlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
+import com.rushik.cowinslotapp.frameworks.AppConstant
 import com.rushik.cowinslotapp.proxies.ApiClient
 import leakcanary.LeakCanary
 

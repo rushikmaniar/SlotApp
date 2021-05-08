@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activities.TestActivity">
@@ -25,11 +26,26 @@
                     android:layout_height="wrap_content"
                     android:text="@string/select_state" />
 
-                <Spinner
-                    android:id="@+id/spinner_state"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
+                    <Spinner
+                        android:id="@+id/spinner_state"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:onClick="onStateRefresh"
+                        android:text="@string/refresh" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -44,10 +60,27 @@
                     android:layout_height="wrap_content"
                     android:text="@string/select_district" />
 
-                <Spinner
-                    android:id="@+id/spinner_district"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/spinner_distrcit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:onClick="onDistrictRefresh"
+                        android:text="@string/refresh" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -63,8 +96,46 @@
                     android:layout_height="wrap_content"
                     android:text="@string/selct_date" />
 
+
+                <DatePicker
+                    android:id="@+id/date_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
             </LinearLayout>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/start_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_green_light"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/start"
+                android:onClick="onStartService"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/stop_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_red_light"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/stop"
+                android:onClick="onStopService"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

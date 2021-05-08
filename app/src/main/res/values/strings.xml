@@ -3,4 +3,7 @@
     <string name="select_state">Select State</string>
     <string name="select_district">Select District</string>
     <string name="selct_date">Selct Date</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="refresh">Refresh</string>
 </resources>

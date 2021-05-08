@@ -1,4 +1,4 @@
-package com.rushik.cowinslotapp
+package com.rushik.cowinslotapp.frameworks
 
 class AppHelper {
     companion object {

@@ -11,7 +11,4 @@ import com.rushik.cowinslotapp.data.localdatabase.entities.Subscription
 interface SubscriptionDao : BaseDao<Subscription> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun insert(data: Subscription)
-
-    @Query("SELECT * FROM Subscription")
-    fun getLiveData() : LiveData<List<String>>
 }
