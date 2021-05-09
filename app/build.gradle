@@ -12,7 +12,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.rushik.cowinslotapp"
+        applicationId "com.example.cowinslotapp"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
@@ -24,7 +24,7 @@ android {
         releaseConfig {
             storeFile file('/Users/temp/Downloads/Apks_Upload/SlotApp/slotApp.keystore')
             storePassword '123456'
-            keyAlias 'slotApp'
+            keyAlias 'sloatApp'
             keyPassword '123456'
         }
     }
