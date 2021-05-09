@@ -20,13 +20,21 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    signingConfigs {
+        releaseConfig {
+            storeFile file('/Users/temp/Downloads/Apks_Upload/SlotApp/slotApp.keystore')
+            storePassword '123456'
+            keyAlias 'slotApp'
+            keyPassword '123456'
+        }
+    }
     buildTypes {
         debug {
             debuggable true
             buildConfigField("String", "BASE_URL", "\"" + localProperties['baseUrl'] + "\"")
         }
         release {
+            signingConfig signingConfigs.releaseConfig
             buildConfigField("String", "BASE_URL", "\"" + localProperties['baseUrl'] + "\"")
 
             minifyEnabled false
