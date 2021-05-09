@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.rushik.cowinslotapp.BuildConfig
 import com.rushik.cowinslotapp.R
 import com.rushik.cowinslotapp.data.localdatabase.providers.ApiProvider
 import com.rushik.cowinslotapp.databinding.ActivityTestBinding
@@ -59,6 +60,8 @@ class TestActivity : AppCompatActivity() {
             val position = AppCache.districtLiveData.value?.indexOf(it) ?: -1
             activityTestBinding.spinnerDistrcit.setSelection(position)
         })
+
+        title = getString(R.string.app_name) + "-" + BuildConfig.VERSION_NAME
     }
 
     fun onStartService(view: View) {
