@@ -47,7 +47,7 @@ class SlotCheckService : Service() {
             checkForAvailableSlots()
 
             val interval = AppCache.checkSlotsIntervalLiveData.value ?: AppConstant.DEFAULT_CHECK_SLOT_INTERVAL
-            handler.postDelayed(this, (interval * 60 * 1000L))
+            handler.postDelayed(this, (interval * 1000L))
         }
     }
 

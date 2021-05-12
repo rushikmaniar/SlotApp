@@ -15,6 +15,6 @@ object AppCache {
     var isServiceRunningLiveData = MutableLiveData(false)
     var checkSlotsIntervalLiveData = MutableLiveData(AppConstant.DEFAULT_CHECK_SLOT_INTERVAL)
     var knownCenters = arrayListOf<Int>()
-    var timeIntervals = arrayListOf(2,5,10)
+    var timeIntervals = arrayListOf(20,30,60,120)
     var isNetworkAvailableLiveData = MutableLiveData(false)
 }
