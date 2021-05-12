@@ -15,27 +15,27 @@ android {
         applicationId "com.example.cowinslotapp"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 11
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         releaseConfig {
-            storeFile file('/Users/temp/Downloads/Apks_Upload/SlotApp/slotApp.keystore')
-            storePassword '123456'
-            keyAlias 'sloatApp'
-            keyPassword '123456'
+            storeFile file(localProperties.getProperty('releaseStoreFile'))
+            storePassword localProperties.getProperty('releaseStorePassword')
+            keyAlias localProperties.getProperty('releasekeyAlias')
+            keyPassword localProperties.getProperty('releasekeyPassword')
         }
     }
     buildTypes {
         debug {
             debuggable true
-            buildConfigField("String", "BASE_URL", "\"" + localProperties['baseUrl'] + "\"")
+            buildConfigField("String", "BASE_URL", localProperties.getProperty('baseUrl'))
         }
         release {
             signingConfig signingConfigs.releaseConfig
-            buildConfigField("String", "BASE_URL", "\"" + localProperties['baseUrl'] + "\"")
+            buildConfigField("String", "BASE_URL", localProperties.getProperty('baseUrl'))
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
